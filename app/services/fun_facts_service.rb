@@ -11,28 +11,33 @@ class FunFactsService
   def run
     response = ai_assistant.chat(user_query)
 
-    message = response.dig('choices', 0, 'message')
+    message = ai_assistant.get_message(response)
 
-    return unless message['role'] == 'assistant' && message['tool_calls']
-
-    function_name = message.dig('tool_calls', 0, 'function', 'name')
-    args =
-      JSON.parse(
-        message.dig('tool_calls', 0, 'function', 'arguments'),
-        { symbolize_names: true }
-      )
+    function_name = function_name_from_message(message)
+    args = args_from_message(message)
 
     case function_name
     when 'get_fact_from_numbers_api'
       get_fact_from_numbers_api(**args)
     when 'return_message_from_system'
-      return_message_from_system(args[:message])
+      return_message_from_system(**args)
     end
   end
 
   private
 
-  def return_message_from_system(message)
+  def args_from_message(message)
+    JSON.parse(
+      message.dig('tool_calls', 0, 'function', 'arguments'),
+      { symbolize_names: true }
+    )
+  end
+  
+  def function_name_from_message(message)
+    message.dig('tool_calls', 0, 'function', 'name')
+  end
+
+  def return_message_from_system(message:)
     assign_fact(message)
   end
 

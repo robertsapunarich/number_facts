@@ -1,5 +1,6 @@
-class AiAssistant
+# frozen_string_literal: true
 
+class AiAssistant
   attr_reader :client
 
   def initialize
@@ -12,8 +13,12 @@ class AiAssistant
     )
   end
 
+  def get_message(response)
+    response.dig('choices', 0, 'message')
+  end
+
   private
-  
+
   def build_params(user_query)
     {
       model: 'gpt-3.5-turbo',
@@ -72,5 +77,5 @@ class AiAssistant
         }
       }
     ]
-    end
+  end
 end
