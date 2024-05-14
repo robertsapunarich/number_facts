@@ -20,7 +20,10 @@ Use the correct Ruby version
 
 Install application dependencies from Gemfile
 
-`bundle install` 
+`bundle install`
+
+Set your OpenAI API key as an environment variable:
+`export OPENAI_API_KEY=your-key-here`
 
 Start the server:
 
