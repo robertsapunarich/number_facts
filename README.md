@@ -1,24 +1,36 @@
-# README
+# Number Facts API
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+A chat API powered by AI with a single endpoint to tell you interesting facts about a number.
+## Setup
 
-Things you may want to cover:
+### Dependencies
 
-* Ruby version
+Ruby Version 3.2.2
+Using [rbenv](https://github.com/rbenv/rbenv) to manage Ruby versions is highly recommended.
 
-* System dependencies
+### Running the application
 
-* Configuration
+Enter the directory.
 
-* Database creation
+`cd number_facts`
 
-* Database initialization
+Use the correct Ruby version
 
-* How to run the test suite
+`rbenv 3.2.2`
 
-* Services (job queues, cache servers, search engines, etc.)
+Install application dependencies from Gemfile
 
-* Deployment instructions
+`bundle install` 
 
-* ...
+Start the server:
+
+`rails s`
+
+From Postman, Insomnia, cURL, or any HTTP client of your choice, make the following GET request
+
+`localhost:3000/fun_facts?question=your question about the number N`
+
+Run the tests from the local directory to ensure endpoints are working properly.
+
+`bundle exec rspec`
+
