@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class FunFactsService
-  attr_reader :user_query, :client, :number, :fact
+  attr_reader :user_query, :client, :fact
 
   def initialize(user_query)
     @user_query = user_query
@@ -28,15 +28,25 @@ class FunFactsService
     case function_name
     when 'get_fact_from_numbers_api'
       get_fact_from_numbers_api(**args)
+    when 'return_message_from_system'
+      return_message_from_system(args[:message])
     end
   end
 
   private
 
+  def return_message_from_system(message)
+    assign_fact(message)
+  end
+
   def build_params
     {
       model: 'gpt-3.5-turbo',
       messages: [
+        {
+          "role": 'system',
+          "content": "Tell the user to provide a number if they don't provide one."
+        },
         {
           "role": 'user',
           "content": user_query
@@ -59,21 +69,35 @@ class FunFactsService
               required: ['number']
             }
           }
+        },
+        {
+          type: 'function',
+          function: {
+            name: 'return_message_from_system',
+            description: 'Return a message from the the OpenAI system in the event it has insufficient information to respond to the user query',
+            parameters: {
+              type: :object,
+              properties: {
+                message: {
+                  type: 'string',
+                  description: 'The message to return to the user'
+                }
+              }
+            }
+          }
         }
       ],
-      tool_choice: {
-        type: 'function',
-        function: {
-          name: 'get_fact_from_numbers_api'
-        }
-      }
+      tool_choice: 'required'
     }
   end
 
   def get_fact_from_numbers_api(number:)
     response = HTTParty.get("http://numbersapi.com/#{number}")
     response.body
-    @number = number
-    @fact = response.body
+    assign_fact(response.body)
+  end
+
+  def assign_fact(fact)
+    @fact = fact
   end
 end

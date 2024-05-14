@@ -6,8 +6,7 @@ class FunFactsController < ApplicationController
     service = FunFactsService.new(query)
     service.run
     render json: {
-      fact: service.fact,
-      number: service.number
+      message: service.fact,
     }
   end
 end
