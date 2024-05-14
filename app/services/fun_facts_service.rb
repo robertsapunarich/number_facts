@@ -1,18 +1,15 @@
 # frozen_string_literal: true
 
 class FunFactsService
-  attr_reader :user_query, :client, :fact
+  attr_reader :user_query, :ai_assistant, :fact
 
   def initialize(user_query)
     @user_query = user_query
-    @client = OpenAI::Client.new(access_token: ENV['OPENAI_API_KEY'])
+    @ai_assistant = AiAssistant.new
   end
 
   def run
-    response =
-      client.chat(
-        parameters: build_params
-      )
+    response = ai_assistant.chat(user_query)
 
     message = response.dig('choices', 0, 'message')
 
