@@ -41,58 +41,6 @@ class FunFactsService
     assign_fact(message)
   end
 
-  def build_params
-    {
-      model: 'gpt-3.5-turbo',
-      messages: [
-        {
-          "role": 'system',
-          "content": "Tell the user to provide a number if they don't provide one."
-        },
-        {
-          "role": 'user',
-          "content": user_query
-        }
-      ],
-      tools: [
-        {
-          type: 'function',
-          function: {
-            name: 'get_fact_from_numbers_api',
-            description: 'Get a fun fact about a number',
-            parameters: {
-              type: :object,
-              properties: {
-                number: {
-                  type: 'integer',
-                  description: 'The number to get a fun fact about'
-                }
-              },
-              required: ['number']
-            }
-          }
-        },
-        {
-          type: 'function',
-          function: {
-            name: 'return_message_from_system',
-            description: 'Return a message from the the OpenAI system in the event it has insufficient information to respond to the user query',
-            parameters: {
-              type: :object,
-              properties: {
-                message: {
-                  type: 'string',
-                  description: 'The message to return to the user'
-                }
-              }
-            }
-          }
-        }
-      ],
-      tool_choice: 'required'
-    }
-  end
-
   def get_fact_from_numbers_api(number:)
     response = HTTParty.get("http://numbersapi.com/#{number}")
     response.body
